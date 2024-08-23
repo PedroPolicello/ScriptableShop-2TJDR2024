@@ -10,11 +10,11 @@ public class PlayerBehavior : MonoBehaviour
 
     private void Awake() => characterController = GetComponent<CharacterController>();
 
+    private bool inShop;
+
     private void FixedUpdate()
     {
-        Vector3 moveDirection = new Vector3(GameManager.Instance.InputManager.Movement.x,
-                                            0,
-                                          GameManager.Instance.InputManager.Movement.y);
+        Vector3 moveDirection = new Vector3(GameManager.Instance.InputManager.Movement.x, 0, GameManager.Instance.InputManager.Movement.y);
         characterController.SimpleMove(moveDirection * moveSpeed);
         RotatePlayerAccordingToInput(moveDirection);
     }
@@ -25,7 +25,7 @@ public class PlayerBehavior : MonoBehaviour
         pointToLookAt.x = moveDirection.x;
         pointToLookAt.y = 0;
         pointToLookAt.z = moveDirection.z;
-        
+
         Quaternion currentRotation = playerBody.transform.rotation;
 
         if (moveDirection != Vector3.zero)
@@ -33,6 +33,26 @@ public class PlayerBehavior : MonoBehaviour
             Quaternion targetRotarion = Quaternion.LookRotation(pointToLookAt);
 
             playerBody.transform.rotation = Quaternion.Slerp(currentRotation, targetRotarion, moveSpeed * Time.deltaTime);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == 3)
+        {
+            other.GetComponent<Interactable>().GetInteractText().SetActive(true);
+            GameManager.Instance.InputManager.EnableInteraction();
+            inShop = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == 3)
+        {
+            other.GetComponent<Interactable>().GetInteractText().SetActive(false);
+            GameManager.Instance.InputManager.DisableInteraction();
+            inShop = false;
         }
     }
 }
