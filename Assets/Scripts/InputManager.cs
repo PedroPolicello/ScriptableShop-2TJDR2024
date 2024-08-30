@@ -15,11 +15,17 @@ public class InputManager
         DisableInteraction();
 
         inputControls.Player.Interact.performed += OnInteractPerformed;
+        inputControls.Player.Inventory.performed += OnInventoryPerformed;
     }
+
 
     void OnInteractPerformed(InputAction.CallbackContext context)
     {
         GameManager.Instance.OpenCloseShopUI();
+    }
+    private void OnInventoryPerformed(InputAction.CallbackContext context)
+    {
+        GameManager.Instance.OpenCloseInventory();
     }
 
     public void EnableMovement() => inputControls.Player.Movement.Enable();
